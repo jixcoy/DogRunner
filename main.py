@@ -19,9 +19,9 @@ Optional:
 - Music/Sound Effects for coins and jumps
 """
 import pygame
-from spritesheets import SpriteSheet
+from player import Player
 
-'#BACKEND'
+
 pygame.init()
 pygame.font.init()
 
@@ -30,34 +30,35 @@ WIDTH, HEIGHT = 543, 257
 WHITE = 255, 255, 255
 FPS = 60
 
+canvas = pygame.Surface((WIDTH, HEIGHT))
 WIN = pygame.display.set_mode((WIDTH, HEIGHT))
-'''TITLE = FONT.render('RUNNER', False, (0, 0, 0))
+TITLE = FONT.render('RUNNER', False, (0, 0, 0))
 TITLE_rect = TITLE.get_rect(center = (WIDTH/2, HEIGHT/3))
-'''
+
 BACKGROUND = pygame.image.load('Assets/pixelart background.jpg').convert_alpha()
 pygame.display.set_caption('Runner')
 clock = pygame.time.Clock()
 
-my_spritesheet = SpriteSheet('ASSETS/dog_spritesheet.png')
-dog_walk = [my_spritesheet.parse_sprite('WALK1.png'), my_spritesheet.parse_sprite('WALK2.png'),
-            my_spritesheet.parse_sprite('WALK3.png'), my_spritesheet.parse_sprite('WALK4.png'),
-            my_spritesheet.parse_sprite('WALK5.png'), my_spritesheet.parse_sprite('WALK6.png')]
+#Load Player
+dog = Player()
 
-index = 0
 run = True
 while run:
-    WIN.blit(BACKGROUND, (0, 0))
-    '''
-    WIN.blit(TITLE, TITLE_rect)
-    '''
+
+
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             run = False
 
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_SPACE:
-                index = (index + 1) % len(dog_walk)
+                dog.SPACE_KEY = True
 
-    WIN.blit(dog_walk[index], (0, 0))
+
+    dog.update()
+    canvas.blit(BACKGROUND, (0, 0))
+    dog.draw(canvas)
+    WIN.blit(canvas, (0, 0))
+    WIN.blit(TITLE, TITLE_rect)
     clock.tick(FPS)
-    pygame.display.flip()
+    pygame.display.update()
