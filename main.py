@@ -9,14 +9,6 @@ the best highscore.
 Input: Keys w, and s
 Output: Jump (w) and Duck (s)
 ------------------------------------------------------------------------------------------------------------------------
-***TO-DO***:
-- Player (class, movement, collision, sprites)
-- Obstacles (class, sprites)
-- Coins (In Obstacles, sprites, coin count)
-- World Generation (obstacle placement, coin placement)
-Optional:
-- Start menu (should definitely do this)
-- Music/Sound Effects for coins and jumps
 """
 import pygame
 from classes import Player
@@ -27,10 +19,24 @@ game_speed = 0
 bg_x_pos = 0
 bg_y_pos = 0
 
+'#Jump Variables'
+JUMP_VEL = 8.5
+jump_vel = 0.8
+
 
 def background():
     speed = 10
     return speed
+
+
+def jump():
+    global JUMP_VEL, jump_vel
+    jump_vel = JUMP_VEL
+    dog.rect.y -= jump_vel * 4
+    jump_vel -= 0.8
+    if jump_vel <= JUMP_VEL:
+        jump_vel = JUMP_VEL
+
 
 '#Setup'
 pygame.init()
@@ -45,11 +51,11 @@ FPS = 60
 canvas = pygame.Surface((WIDTH, HEIGHT))
 WIN = pygame.display.set_mode((WIDTH, HEIGHT))
 TITLE = FONT.render('RUNNER', False, (0, 0, 0))
-TITLE_rect = TITLE.get_rect(center = (WIDTH/2, HEIGHT/3))
+TITLE_rect = TITLE.get_rect(center=(WIDTH/2, HEIGHT/3))
 
-pole = pygame.image.load('Assets/bush-1.png.png').convert_alpha()
+pole = pygame.image.load('ASSETS/pole_hitbox.png ').convert_alpha()
 
-BACKGROUND = pygame.image.load('Assets/scrolling_background.jpg').convert_alpha()
+BACKGROUND = pygame.image.load('ASSETS/scrolling_background.jpg').convert_alpha()
 pygame.display.set_caption('Runner')
 clock = pygame.time.Clock()
 
@@ -75,11 +81,18 @@ while run:
             run = False
 
         if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_SPACE:
-                dog.SPACE_KEY = True
+            if event.key == pygame.K_1:
+                dog.START_KEY = True
                 '#Starts background scroll'
                 game_speed = background()
 
+            if event.key == pygame.K_SPACE:
+                dog.SPACE_KEY = True
+                jump()
+
+        if event.type == pygame.KEYUP:
+            if event.key == pygame.K_SPACE:
+                dog.SPACE_KEY = False
 
     dog.update()
     dog.draw(canvas)
