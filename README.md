@@ -6,5 +6,6 @@ This is a runner game made using the pygame module. It has a player that can dod
 List of helpful videos:
 - Pygame Animation Tutorial: How to Animate a Player Character
 - Pygame Sprite Sheet Tutorial: How to Load, Parse, and Use Sprite Sheets
+
 Input: Keys 1, SPACE
 Output: Start Game, Jump
