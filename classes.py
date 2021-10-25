@@ -6,15 +6,15 @@ class Player(pygame.sprite.Sprite):
     X_POS = 5
     Y_POS = 125
 
-    def __init__(self):
+    def __init__(self, pole):
         pygame.sprite.Sprite.__init__(self)
 
         self.START_KEY = False
         self.SPACE_KEY = False
 
         self.load_frames()
-        self.rect = self.idle_frames[0].get_rect()
-        self.rect.topleft = (self.X_POS, self.Y_POS)
+        self.dog_rect = self.idle_frames[0].get_rect()
+        self.dog_rect.topleft = (self.X_POS, self.Y_POS)
         self.current_frame = 0
         self.current_image = self.idle_frames[0]
 
@@ -26,25 +26,30 @@ class Player(pygame.sprite.Sprite):
         self.walking_state = False
         self.dead = False
 
-        self.pole = Pole()
+        self.pole = pole
 
     def draw(self, display):
-        display.blit(self.current_image, self.rect)
+        display.blit(self.current_image, self.dog_rect)
 
     def update(self):
         self.state = 0
+
         if self.START_KEY:
             self.state = 2
-            self.rect.y = 140
 
         if self.SPACE_KEY:
             self.state = 3
 
-        if self.collision_check():
-            self.state = 4
+        if self.collision():
+            return True
+
 
         self.set_state()
         self.animate()
+
+    def collision(self):
+        if self.dog_rect.colliderect(self.pole):
+            return True
 
     def set_state(self):
         self.idle_state = True
@@ -57,12 +62,6 @@ class Player(pygame.sprite.Sprite):
             self.walking_state = False
             self.idle_state = False
             self.jump_state = True
-
-        if self.state == 4:
-            self.dead = True
-            self.walking_state = False
-            self.idle_state = False
-            self.jump_state = False
 
     def animate(self):
         now = pygame.time.get_ticks()
@@ -77,10 +76,6 @@ class Player(pygame.sprite.Sprite):
                 self.last_updated = now
                 self.current_image = self.jump_frames[0]
 
-        elif self.dead:
-            if now - self.last_updated > 200:
-                self.current_frame = (self.current_frame + 1) % len(self.death_frames)
-                self.current_image = self.death_frames[self.current_frame]
 
         else:
             if now - self.last_updated > 100:
@@ -100,17 +95,14 @@ class Player(pygame.sprite.Sprite):
 
         self.jump_frames = [my_spritesheet.parse_sprite('WALK6.png')]
 
-        self.death_frames = [my_spritesheet.parse_sprite('DEATH1.png'), my_spritesheet.parse_sprite('DEATH2.png'),
-                            my_spritesheet.parse_sprite('DEATH3.png'), my_spritesheet.parse_sprite('DEATH4.png')
-                            ]
-
-    def collision_check(self):
-        if self.rect.colliderect(self.pole.pole_rect):
-            return True
-
 
 class Pole:
+    X_POS = 1609
+    Y_POS = 150
     def __init__(self):
-        self.pole_img = pygame.image.load('ASSETS/pole_hitbox.png')
+        self.pole_img = pygame.image.load('ASSETS/pole_hitbox.png').convert()
         self.pole_rect = self.pole_img.get_rect()
+        self.pole_rect.topleft = (self.X_POS, self.Y_POS)
 
+    def draw(self, display):
+        display.blit(self.pole_img, self.pole_rect)
