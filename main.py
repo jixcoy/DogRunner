@@ -20,22 +20,14 @@ bg_x_pos = 0
 bg_y_pos = 0
 
 '#Jump Variables'
-JUMP_VEL = 8.5
-jump_vel = 0.8
+dog_mass = 1
+jump_vel = 5
+isjump = False
 
 
 def background():
     speed = 10
     return speed
-
-
-def jump():
-    global JUMP_VEL, jump_vel
-    jump_vel = JUMP_VEL
-    dog.rect.y -= jump_vel * 4
-    jump_vel -= 0.8
-    if jump_vel <= JUMP_VEL:
-        jump_vel = JUMP_VEL
 
 
 '#Setup'
@@ -59,7 +51,7 @@ BACKGROUND = pygame.image.load('ASSETS/scrolling_background.jpg').convert_alpha(
 pygame.display.set_caption('Runner')
 clock = pygame.time.Clock()
 
-'#Load Player'
+'#Load Player instance'
 dog = Player()
 
 '#Game Loop'
@@ -77,22 +69,39 @@ while run:
 
     '#Event Detection'
     for event in pygame.event.get():
+
+        '#Exit Window'
         if event.type == pygame.QUIT:
             run = False
 
         if event.type == pygame.KEYDOWN:
+            '#Start Game'
             if event.key == pygame.K_1:
                 dog.START_KEY = True
-                '#Starts background scroll'
                 game_speed = background()
 
+            '#Starts Jump Logic and Updates Dog to Jump img'
             if event.key == pygame.K_SPACE:
                 dog.SPACE_KEY = True
-                jump()
+                isjump = True
 
         if event.type == pygame.KEYUP:
             if event.key == pygame.K_SPACE:
                 dog.SPACE_KEY = False
+
+    '#Jump Logic'
+    if isjump:
+        force = (1/2) * dog_mass * (jump_vel**2)
+        dog.rect.y -= force
+        jump_vel = jump_vel - 1
+
+        if jump_vel < 0:
+            dog_mass = -1
+
+        if jump_vel == -6:
+            isjump = False
+            jump_vel = 5
+            dog_mass = 1
 
     dog.update()
     dog.draw(canvas)
