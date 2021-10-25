@@ -3,6 +3,9 @@ from spritesheets import SpriteSheet
 
 
 class Player(pygame.sprite.Sprite):
+    X_POS = 5
+    Y_POS = 125
+
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
 
@@ -11,7 +14,7 @@ class Player(pygame.sprite.Sprite):
 
         self.load_frames()
         self.rect = self.idle_frames[0].get_rect()
-        self.rect.topleft = (5, 125)
+        self.rect.topleft = (self.X_POS, self.Y_POS)
         self.current_frame = 0
         self.current_image = self.idle_frames[0]
 
@@ -21,6 +24,9 @@ class Player(pygame.sprite.Sprite):
         self.idle_state = True
         self.jump_state = False
         self.walking_state = False
+        self.dead = False
+
+        self.pole = Pole()
 
     def draw(self, display):
         display.blit(self.current_image, self.rect)
@@ -33,6 +39,10 @@ class Player(pygame.sprite.Sprite):
 
         if self.SPACE_KEY:
             self.state = 3
+
+        if self.collision_check():
+            self.state = 4
+
         self.set_state()
         self.animate()
 
@@ -48,6 +58,12 @@ class Player(pygame.sprite.Sprite):
             self.idle_state = False
             self.jump_state = True
 
+        if self.state == 4:
+            self.dead = True
+            self.walking_state = False
+            self.idle_state = False
+            self.jump_state = False
+
     def animate(self):
         now = pygame.time.get_ticks()
         if self.idle_state:
@@ -60,6 +76,11 @@ class Player(pygame.sprite.Sprite):
             if now - self.last_updated > 200:
                 self.last_updated = now
                 self.current_image = self.jump_frames[0]
+
+        elif self.dead:
+            if now - self.last_updated > 200:
+                self.current_frame = (self.current_frame + 1) % len(self.death_frames)
+                self.current_image = self.death_frames[self.current_frame]
 
         else:
             if now - self.last_updated > 100:
@@ -78,3 +99,18 @@ class Player(pygame.sprite.Sprite):
                                ]
 
         self.jump_frames = [my_spritesheet.parse_sprite('WALK6.png')]
+
+        self.death_frames = [my_spritesheet.parse_sprite('DEATH1.png'), my_spritesheet.parse_sprite('DEATH2.png'),
+                            my_spritesheet.parse_sprite('DEATH3.png'), my_spritesheet.parse_sprite('DEATH4.png')
+                            ]
+
+    def collision_check(self):
+        if self.rect.colliderect(self.pole.pole_rect):
+            return True
+
+
+class Pole:
+    def __init__(self):
+        self.pole_img = pygame.image.load('ASSETS/pole_hitbox.png')
+        self.pole_rect = self.pole_img.get_rect()
+
