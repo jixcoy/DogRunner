@@ -1,16 +1,23 @@
 """
 ------------------------------------------------------------------------------------------------------------------------
-Name: John Ixcoy    Class Name: Unit: 2 Assignment: Unit 3 Project
-Due Date: 10 / 25/ 2021
+Name: John Ixcoy  |  Unit: 2  |  Assignment: Unit 3 Project
+Due Date: 10 / 27/ 2021
 Description:
-This is a runner game made using the pygame module. It has a player that can dodge obstacles and collect coins for
-the best high score.
+This is a runner game made using the pygame module. It has a player that can dodge obstacles by jumping trying to get
+the highest score they can.
 
-Input: Keys w, and 1
-Output: Jump (w) and Start Game 1
+***NOTE***
+The animation code was taken and adapted from Christian Duenas. It uses an effecient method with json, which helped me a
+lot. More info in the spritesheets.py file
+
+Also. This code sucks. It's my first python project with pygame. But I was going for a 'If it works, it works' approach.
+So sorry if this hurts your eyes :)
+
+Input: Keys SPACE and 1
+Output: Jump (SPACE) and Start Game (1)
 ------------------------------------------------------------------------------------------------------------------------
 """
-import pygame
+import pygame, random
 from classes import Player
 from classes import Pole
 from classes import Coin
@@ -25,12 +32,12 @@ dog_mass = 1
 jump_vel = 7
 isjump = False
 
-
+'#Sets background speed'
 def background():
     speed = 10
     return speed
 
-
+'#Blits the current score, which gets added by 1 every time a while loop iteration has run'
 def score():
     global points
     points += 1
@@ -68,7 +75,7 @@ DEATH_TEXT = FONT.render('YOU DIED', False, BLACK)
 DEATH_TEXT_rect = DEATH_TEXT.get_rect(center=(WIDTH/2, HEIGHT/3))
 
 BACKGROUND = pygame.image.load('Assets/scrolling_background.jpg').convert_alpha()
-pygame.display.set_caption('Runner')
+pygame.display.set_caption('Dog Run')
 
 '#Clock instance to set fps'
 clock = pygame.time.Clock()
@@ -101,8 +108,9 @@ while run:
         pole.pole_rect.x += pole.X_POS
 
     coin.coin_rect.x -= game_speed
+    random_multiplier = random.randint(1, 4)
     if coin.coin_rect.x <= -WIDTH:
-        coin.coin_rect.x += pole.X_POS*2
+        coin.coin_rect.x += pole.X_POS * random_multiplier
 
     '#Draws the Canvas, Title, and Subtitle'
     canvas.blit(BACKGROUND, (bg_x_pos, bg_y_pos))
@@ -125,7 +133,7 @@ while run:
                 game_speed = background()
 
             '#Starts Jump Logic and Updates Dog to Jump img'
-            if event.key == pygame.K_SPACE and not dog.update():
+            if event.key == pygame.K_SPACE and not dog.update() == 'Death':
                 dog.SPACE_KEY = True
                 isjump = True
 
@@ -151,13 +159,13 @@ while run:
             dog.dog_rect.y = 140
 
     '#Draws score if the dog is not idle and not dead'
-    if not dog.idle_state and not dog.update():
+    if not dog.idle_state and not dog.update() == 'Death':
         score()
         FINAL_SCORE = SUB_FONT.render(f'FINAL SCORE: {points}', False, BLACK)
         FINAL_SCORE_rect = FINAL_SCORE.get_rect(center=(WIDTH / 2, HEIGHT / 3 + 50))
 
     '#Draws Death Screen where Final score is displayed'
-    if dog.update():
+    if dog.update() == 'Death':
         game_speed = 0
         canvas.blit(DEATH_TEXT, DEATH_TEXT_rect)
         canvas.blit(FINAL_SCORE, FINAL_SCORE_rect)
