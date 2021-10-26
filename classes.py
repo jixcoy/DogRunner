@@ -6,7 +6,7 @@ class Player(pygame.sprite.Sprite):
     X_POS = 5
     Y_POS = 125
 
-    def __init__(self, pole):
+    def __init__(self, pole, Coin):
         pygame.sprite.Sprite.__init__(self)
 
         self.START_KEY = False
@@ -24,9 +24,9 @@ class Player(pygame.sprite.Sprite):
         self.idle_state = True
         self.jump_state = False
         self.walking_state = False
-        self.dead = False
 
         self.pole = pole
+        self.coin = Coin
 
     def draw(self, display):
         display.blit(self.current_image, self.dog_rect)
@@ -40,15 +40,21 @@ class Player(pygame.sprite.Sprite):
         if self.SPACE_KEY:
             self.state = 3
 
-        if self.collision():
+        if self.pole_collision():
             return True
 
+        if self.coin_collision():
+            return 3
 
         self.set_state()
         self.animate()
 
-    def collision(self):
+    def pole_collision(self):
         if self.dog_rect.colliderect(self.pole):
+            return True
+
+    def coin_collision(self):
+        if self.dog_rect.colliderect(self.coin.coin_rect):
             return True
 
     def set_state(self):
@@ -76,7 +82,6 @@ class Player(pygame.sprite.Sprite):
                 self.last_updated = now
                 self.current_image = self.jump_frames[0]
 
-
         else:
             if now - self.last_updated > 100:
                 self.last_updated = now
@@ -99,10 +104,24 @@ class Player(pygame.sprite.Sprite):
 class Pole:
     X_POS = 1609
     Y_POS = 150
+
     def __init__(self):
-        self.pole_img = pygame.image.load('ASSETS/pole_hitbox.png').convert()
+        self.pole_img = pygame.image.load('ASSETS/pole_hitbox.png').convert_alpha()
         self.pole_rect = self.pole_img.get_rect()
         self.pole_rect.topleft = (self.X_POS, self.Y_POS)
 
     def draw(self, display):
         display.blit(self.pole_img, self.pole_rect)
+
+
+class Coin:
+    X_POS = 950
+    Y_POS = 140
+
+    def __init__(self):
+        self.coin_img = pygame.image.load('ASSETS/coin.png').convert_alpha()
+        self.coin_rect = self.coin_img.get_rect()
+        self.coin_rect.topleft = (self.X_POS, self.Y_POS)
+
+    def draw(self, display):
+        display.blit(self.coin_img, self.coin_rect)
