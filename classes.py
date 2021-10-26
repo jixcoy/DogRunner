@@ -9,17 +9,19 @@ class Player(pygame.sprite.Sprite):
     def __init__(self, pole, Coin):
         pygame.sprite.Sprite.__init__(self)
 
+        '#Bools for Start Game and Jump keys detection'
         self.START_KEY = False
         self.SPACE_KEY = False
 
+        '#Makes rect of the first dog img and sets up some animation variables'
         self.load_frames()
         self.dog_rect = self.idle_frames[0].get_rect()
         self.dog_rect.topleft = (self.X_POS, self.Y_POS)
         self.current_frame = 0
         self.current_image = self.idle_frames[0]
-
         self.last_updated = 0
 
+        '#Varialbes for state update'
         self.state = 0
         self.idle_state = True
         self.jump_state = False
@@ -28,9 +30,13 @@ class Player(pygame.sprite.Sprite):
         self.pole = pole
         self.coin = Coin
 
+    '#Draws the current image on teh screen (each while loop iteration will have a different image'
     def draw(self, display):
         display.blit(self.current_image, self.dog_rect)
 
+    '#Updates the state of the dog depending on the Start key (key 1),'
+    '#Jump key (Key SPACE), and if pole/coin collision is detected'
+    '#Then calls the set_state function and starts the animation (animate())'
     def update(self):
         self.state = 0
 
@@ -41,22 +47,26 @@ class Player(pygame.sprite.Sprite):
             self.state = 3
 
         if self.pole_collision():
-            return True
+            return 'Death'
 
         if self.coin_collision():
-            return 3
+            return 'Death'
 
         self.set_state()
         self.animate()
 
+    '#Returns True if collision is detected with the pole'
     def pole_collision(self):
         if self.dog_rect.colliderect(self.pole):
             return True
 
+    '#Returns True if collision is detected with the coin'
     def coin_collision(self):
         if self.dog_rect.colliderect(self.coin.coin_rect):
             return True
 
+    '#Sets the state of the dog by switching bools to True/False'
+    '#depending on the update Function'
     def set_state(self):
         self.idle_state = True
         if self.state == 2:
@@ -69,6 +79,7 @@ class Player(pygame.sprite.Sprite):
             self.idle_state = False
             self.jump_state = True
 
+    '#Animates the dog depending on the state of the dog'
     def animate(self):
         now = pygame.time.get_ticks()
         if self.idle_state:
@@ -88,6 +99,7 @@ class Player(pygame.sprite.Sprite):
                 self.current_frame = (self.current_frame + 1) % len(self.walking_frames)
                 self.current_image = self.walking_frames[self.current_frame]
 
+    '#Loads the frames of each dog animation'
     def load_frames(self):
         my_spritesheet = SpriteSheet('ASSETS/dog_spritesheet.png')
         self.idle_frames = [my_spritesheet.parse_sprite('IDLE1.png'), my_spritesheet.parse_sprite('IDLE2.png'),
@@ -106,7 +118,7 @@ class Pole:
     Y_POS = 150
 
     def __init__(self):
-        self.pole_img = pygame.image.load('ASSETS/pole_hitbox.png').convert_alpha()
+        self.pole_img = pygame.image.load('ASSETS/pole.png').convert_alpha()
         self.pole_rect = self.pole_img.get_rect()
         self.pole_rect.topleft = (self.X_POS, self.Y_POS)
 
