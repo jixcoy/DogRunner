@@ -50,7 +50,7 @@ class Player(pygame.sprite.Sprite):
             return 'Death'
 
         if self.coin_collision():
-            return 'Death'
+            return 'coin'
 
         self.set_state()
         self.animate()
@@ -118,7 +118,7 @@ class Pole:
     Y_POS = 150
 
     def __init__(self):
-        self.pole_img = pygame.image.load('ASSETS/pole_hitbox.png').convert_alpha()
+        self.pole_img = pygame.image.load('ASSETS/pole.png').convert_alpha()
         self.pole_rect = self.pole_img.get_rect()
         self.pole_rect.topleft = (self.X_POS, self.Y_POS)
 
