@@ -6,10 +6,6 @@ Description:
 This is a runner game made using the pygame module. It has a player that can dodge obstacles by jumping trying to get
 the highest score they can.
 
-***NOTE***
-The animation code was taken and adapted from Christian Duenas. It uses an effecient method with json, which helped me a
-lot. More info in the spritesheets.py file
-
 Also. This code sucks. It's my first python project with pygame. But I was going for a 'If it works, it works' approach.
 So sorry if this hurts your eyes :)
 
@@ -73,6 +69,9 @@ SUB_TITLE_rect = SUB_TITLE.get_rect(center=(WIDTH/2, HEIGHT/3 + 50))
 
 DEATH_TEXT = FONT.render('YOU DIED', False, BLACK)
 DEATH_TEXT_rect = DEATH_TEXT.get_rect(center=(WIDTH/2, HEIGHT/3))
+
+LIE = SUB_FONT.render('THE COIN IS A LIE', False, BLACK)
+LIE_rect = LIE.get_rect(center=(WIDTH/2, HEIGHT/3 + 100))
 
 BACKGROUND = pygame.image.load('Assets/scrolling_background.jpg').convert_alpha()
 pygame.display.set_caption('Dog Run')
@@ -159,7 +158,7 @@ while run:
             dog.dog_rect.y = 140
 
     '#Draws score if the dog is not idle and not dead'
-    if not dog.idle_state and not dog.update() == 'Death':
+    if not dog.idle_state and not dog.update() == 'Death' and not dog.update() == 'coin':
         score()
         FINAL_SCORE = SUB_FONT.render(f'FINAL SCORE: {points}', False, BLACK)
         FINAL_SCORE_rect = FINAL_SCORE.get_rect(center=(WIDTH / 2, HEIGHT / 3 + 50))
@@ -169,6 +168,12 @@ while run:
         game_speed = 0
         canvas.blit(DEATH_TEXT, DEATH_TEXT_rect)
         canvas.blit(FINAL_SCORE, FINAL_SCORE_rect)
+
+    if dog.update() == 'coin':
+        game_speed = 0
+        canvas.blit(DEATH_TEXT, DEATH_TEXT_rect)
+        canvas.blit(FINAL_SCORE, FINAL_SCORE_rect)
+        canvas.blit(LIE, LIE_rect)
 
     '#Updates the dog and draws both the dog and the pole on the canvas'
     dog.update()
