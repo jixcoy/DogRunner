@@ -2,13 +2,7 @@ import pygame
 import json
 
 class SpriteSheet:
-    """
-    This class was heavily based on a youtube tutorial on how to animate sprites on a sprite sheet. This uses json which
-    I don't now how to use. The code was adapted to work with my program, but this file's code credits go to Christian
-    Duenas
-    Video link:
-    https://www.youtube.com/watch?v=ePiMYe7JpJo
-    """
+
     def __init__(self, filename):
         self.filename = filename
         self.sprite_sheet = pygame.image.load(filename).convert_alpha()
