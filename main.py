@@ -6,6 +6,10 @@ Description:
 This is a runner game made using the pygame module. It has a player that can dodge obstacles by jumping trying to get
 the highest score they can.
 
+Press '1' to start the game
+Press Space to jump
+Press the red X button at the top right of the window to exit the program after dying. 
+
 Also. This code sucks. It's my first python project with pygame. But I was going for a 'If it works, it works' approach.
 So sorry if this hurts your eyes :)
 
