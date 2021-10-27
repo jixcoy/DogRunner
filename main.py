@@ -6,9 +6,9 @@ Description:
 This is a runner game made using the pygame module. It has a player that can dodge obstacles by jumping trying to get
 the highest score they can.
 
-Press '1' to start the game
-Press Space to jump
-Press the red X button at the top right of the window to exit the program after dying. 
+***NOTE***
+The animation code was taken and adapted from Christian Duenas. It uses an effecient method with json, which helped me a
+lot. More info in the spritesheets.py file
 
 Also. This code sucks. It's my first python project with pygame. But I was going for a 'If it works, it works' approach.
 So sorry if this hurts your eyes :)
@@ -46,6 +46,12 @@ def score():
     canvas.blit(score_text, score_text_font)
 
 
+def draw_instr():
+    INSTR = instr_font.render('PRESS THE SPACE BAR TO JUMP', False, BLACK)
+    INSTR_rect = INSTR.get_rect(center=(WIDTH / 2, HEIGHT / 3 + 120))
+    canvas.blit(INSTR, INSTR_rect)
+
+
 '#-----------------------------Set Up-----------------------------'
 '#Pygame and pygame.font initialization'
 pygame.init()
@@ -54,6 +60,7 @@ pygame.font.init()
 '#Font instances for text'
 FONT = pygame.font.SysFont('Ariel', 100)
 SUB_FONT = pygame.font.SysFont('Ariel', 50)
+instr_font = pygame.font.SysFont('Ariel', 25)
 SCORE_FONT = pygame.font.SysFont('Ariel', 25)
 
 '#Base setup variables'
@@ -96,6 +103,7 @@ while run:
     bg_x_pos -= game_speed
     TITLE_rect.x -= game_speed
     SUB_TITLE_rect.x -= game_speed
+
     if bg_x_pos <= -WIDTH:
         bg_x_pos += WIDTH
 
@@ -163,6 +171,7 @@ while run:
 
     '#Draws score if the dog is not idle and not dead'
     if not dog.idle_state and not dog.update() == 'Death' and not dog.update() == 'coin':
+        draw_instr()
         score()
         FINAL_SCORE = SUB_FONT.render(f'FINAL SCORE: {points}', False, BLACK)
         FINAL_SCORE_rect = FINAL_SCORE.get_rect(center=(WIDTH / 2, HEIGHT / 3 + 50))
