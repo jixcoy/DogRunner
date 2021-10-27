@@ -131,7 +131,7 @@ class Coin:
     Y_POS = 140
 
     def __init__(self):
-        self.coin_img = pygame.image.load('ASSETS/coin.png').convert_alpha()
+        self.coin_img = pygame.image.load('ASSETS/coinn.png').convert_alpha()
         self.coin_rect = self.coin_img.get_rect()
         self.coin_rect.topleft = (self.X_POS, self.Y_POS)
 
